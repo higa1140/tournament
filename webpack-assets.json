@@ -1,6 +1,6 @@
 {
-  "vendor": {
-    "js": "vendor.4eb909b4155802180d09.bundle.js"
+  "node": {
+    "js": "node.4eb909b4155802180d09.bundle.js"
   },
   "main": {
     "js": "main.9e39a945e28212e1800b.bundle.js"
