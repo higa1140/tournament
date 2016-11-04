@@ -138,7 +138,7 @@ var AboutComponent = (function () {
         // you would do this if you don't want the mock-data bundled
         // remember that 'es6-promise-loader' is a promise
         setTimeout(function () {
-            __webpack_require__.e/* System.import */(1).then(__webpack_require__.bind(null, "./src/assets/mock-data/mock-data.json"))
+            __webpack_require__.e/* System.import */(1).then(__webpack_require__.bind(null, "./src/assets/mock-data/mock-data.json")).then(function (mod) { return (mod.__esModule && mod.default) ? mod.default : mod; })
                 .then(function (json) {
                 console.log('async mockData', json);
                 _this.localState = json;
@@ -387,9 +387,7 @@ exports.ROUTES = [
     { path: 'tournament', component: tournament_1.TournamentComponent },
     { path: 'about', component: about_1.AboutComponent },
     {
-        path: 'detail', loadChildren: function () { return __webpack_require__.e/* System.import */(0).then(__webpack_require__.bind(null, "./src/app/+detail/index.ts")).then(function (comp) {
-            return comp.default;
-        }); },
+        path: 'detail', loadChildren: function () { return __webpack_require__.e/* System.import */(0).then(__webpack_require__.bind(null, "./src/app/+detail/index.ts")).then(function (mod) { return (mod.__esModule && mod.default) ? mod.default : mod; }); }
     },
     { path: '**', component: no_content_1.NoContentComponent },
 ];
