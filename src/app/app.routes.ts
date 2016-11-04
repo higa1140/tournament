@@ -11,13 +11,11 @@ import { DataResolver } from './app.resolver';
 export const ROUTES: Routes = [
   { path: '',      component: BasicComponent },
   { path: 'home',  component: HomeComponent },
+  { path: 'basic',      component: BasicComponent },
   { path: 'tournament',  component: TournamentComponent },
   { path: 'about', component: AboutComponent },
   {
-    path: 'detail', loadChildren: () => System.import('./+detail').then((comp: any) => {
-      return comp.default;
-    })
-    ,
+    path: 'detail', loadChildren: () => System.import('./+detail')
   },
   { path: '**',    component: NoContentComponent },
 ];
