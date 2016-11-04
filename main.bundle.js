@@ -384,6 +384,7 @@ var no_content_1 = __webpack_require__("./src/app/no-content/index.ts");
 exports.ROUTES = [
     { path: '', component: basic_1.BasicComponent },
     { path: 'home', component: home_1.HomeComponent },
+    { path: 'basic', component: basic_1.BasicComponent },
     { path: 'tournament', component: tournament_1.TournamentComponent },
     { path: 'about', component: about_1.AboutComponent },
     {
