@@ -1,1 +1,1 @@
-webpackJsonpac__name_([1],{"./src/assets/mock-data/mock-data.json":function(e,o){throw new Error("Module build failed: SyntaxError: Unexpected token m in JSON at position 0\n    at Object.parse (native)\n    at Object.module.exports (/home/higa/atom/tournament/node_modules/json-loader/index.js:7:48)")}});
+webpackJsonpac__name_([1],{"./src/assets/mock-data/mock-data.json":function(a,s){a.exports=[{res:"data"}]}});
