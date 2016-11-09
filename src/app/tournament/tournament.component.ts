@@ -1,6 +1,11 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Constant } from '../constant'
+import { Constant } from '../constant';
+import {IPlayer} from '../model/player';
+import {IMatch} from '../model/match';
+import {PlayerService} from '../service/player.service';
+import {MatchService} from '../service/match.service';
+
 /*
  * We're loading this component asynchronously
  * We are using some magic with es6-promise-loader that will wrap the module with a Promise
@@ -11,76 +16,40 @@ import { Constant } from '../constant'
   selector: 'tournament',
   styles: [`
   `],
-  templateUrl: './tournament.component.html'
+  templateUrl: './tournament.component.html',
+  providers: [PlayerService, MatchService]
+
 })
 
 export class TournamentComponent {
   public title: string;
-  public players:{id:number, name:string, enable:boolean}[];
-  public matching:{match:{id:number, playerA:MatchingPlayer, playerB:MatchingPlayer}[]}[];
+
+  private tournamentId:number;
+  public players:IPlayer[];
+  public matchs:IMatch[];
+  public matchings:IMatching[];
 
 
-  constructor(public route: ActivatedRoute) {
-    this.players = [];
-    this.players.push({id:0, name:"player A", enable:true});
-    this.players.push({id:1, name:"player B", enable:true});
-    this.players.push({id:2, name:"player C", enable:true});
-    this.players.push({id:3, name:"player D", enable:true});
-    this.players.push({id:4, name:"player E", enable:true});
-    this.players.push({id:5, name:"player F", enable:true});
-    this.players.push({id:6, name:"player G", enable:true});
-    this.players.push({id:7, name:"player H", enable:true});
-
-    this.matching = [];
-    this.matching.push({
-      match:
-      [
-        {
-          id:0,
-          playerA:{id:0, score:3}, 
-          playerB:{id:1,score:2}
-        },
-        {
-          id:1,
-          playerA:{id:2, score:0}, 
-          playerB:{id:3,score:3}
-        },
-        {
-          id:2,
-          playerA:{id:4, score:3}, 
-          playerB:{id:5,score:2}
-        },
-        {
-          id:3,
-          playerA:{id:6, score:1}, 
-          playerB:{id:7,score:0}
-        }
-      ]
-    });
-
-    this.matching.push({match:[
-      {
-        id:4,
-        playerA:{ matchingId:0,score:1},
-        playerB:{ matchingId:1,score:2}
-      },
-      {
-        id:5,
-        playerA:{ matchingId:2,score:2},
-        playerB:{ matchingId:3,score:3}
-      }
-    ]});
-    this.matching.push({match:[
-      {
-        id:6,
-        playerA:{ matchingId:4},
-        playerB:{ matchingId:5}
-      }
-    ]});
+  constructor(public route: ActivatedRoute,private playerService:PlayerService, private matchService:MatchService) {
+    this.tournamentId = Number(route.params["value"]["id"]);
   }
 
   ngOnInit() {
-    this.drawTournament();
+    var getPlayerPromise:Promise<IPlayer[]> = 
+    this.playerService.getPlayer(this.tournamentId).then((result:IPlayer[])=>{
+      this.players =result;
+    });
+
+    var getMatchingPromise:Promise<IMatch[]> = 
+    this.matchService.getMatch(this.tournamentId).then((result:IMatch[])=>{
+      this.matchs = result;
+    })
+
+Promise.all([getPlayerPromise, getMatchingPromise]).then(()=>{
+  this.matchings = this.createTournament();
+  this.drawTournament();
+});
+    
   }
 
   drawTournament(){
@@ -95,57 +64,56 @@ export class TournamentComponent {
 
     // draw playerName
     for(let i = 0; i < this.players.length; i++){
-      console.log(this.players[i].name);
       height = 20 + (i * 40); 
       this.drawPlayer(context, this.players[i].name, 20, height);
     }
     
-
     // draw tournament
-    for(let i = 0; i < this.matching.length; i++){
+    for(let i = 0; i < this.matchings.length; i++){
       startWidth = 120 + (i * 40); 
-      // let startHeight:number = 20;
 
+      let matching:IMatching = this.matchings[i];
 
-      for(let j = 0; j < this.matching[i].match.length; j++){
+      // for(let j = 0; j < matching.match.length; j++){
+      for(let match of matching.match){
         // startHeight =　20 + (j * 80) + (i * 20);
-        let startHeightA = this.getStartHeight(this.matching[i].match[j].playerA,i);
-        let startHeightB = this.getStartHeight(this.matching[i].match[j].playerB,i);
+        let startHeightA = this.getStartHeight(match.playerA,i);
+        let startHeightB = this.getStartHeight(match.playerB,i);
         var startHeightAdjust:number = 40 * (i + 1);
 
-        this.matching[i].match[j].playerA.draw ={
+        match.playerA.position ={
           startWidth, 
           startHeight:startHeightA, 
-          endWidth: startWidth+40, 
-          endHieght:(startHeightA+ startHeightB)/2
+          endWidth: startWidth + 40, 
+          endHeight:(startHeightA + startHeightB) / 2
         };
         
-        this.matching[i].match[j].playerB.draw ={
+        match.playerB.position ={
           startWidth, 
           startHeight :startHeightB, 
-          endWidth: startWidth+40, 
-          endHieght:(startHeightA+ startHeightB)/2
+          endWidth: startWidth + 40, 
+          endHeight:(startHeightA + startHeightB) / 2
         };
 
-        this.draw(context, this.matching[i].match[j].playerA.draw.startWidth, this.matching[i].match[j].playerA.draw.startHeight, this.matching[i].match[j].playerA.draw.endWidth, this.matching[i].match[j].playerA.draw.endHieght, this.isWin(this.matching[i].match[j].playerA, this.matching[i].match[j].playerB));
-        this.draw(context, this.matching[i].match[j].playerB.draw.startWidth, this.matching[i].match[j].playerB.draw.startHeight, this.matching[i].match[j].playerB.draw.endWidth, this.matching[i].match[j].playerB.draw.endHieght, this.isWin(this.matching[i].match[j].playerB, this.matching[i].match[j].playerA));
-        // this.drawLine(context, i, startWidth, startHeight, PlayerType.A, this.isWin(this.matching[i].match[j].playerA, this.matching[i].match[j].playerB));
-        // this.drawLine(context, i, startWidth, startHeight, PlayerType.B, this.isWin(this.matching[i].match[j].playerB, this.matching[i].match[j].playerA));
+        this.drawLine(
+          context, match.playerA.position, this.isWin(match.playerA, match.playerB)
+        );
+
+        this.drawLine(
+          context, match.playerB.position, this.isWin(match.playerB, match.playerA)
+        );
       }
     }
   }
 
-  getStartHeight(matchingPlayer:MatchingPlayer, round:number){
+  getStartHeight(matchingPlayer:IMatchingPlayer, round:number){
     if(matchingPlayer.matchingId != undefined  && matchingPlayer.matchingId!=null){
-      for(var match of this.matching[round-1].match){
+      for(var match of this.matchings[round-1].match){
         if(match.id == matchingPlayer.matchingId){
-          return match.playerA.draw.endHieght;
+          return match.playerA.position.endHeight;
         }
       }
     } else {
-      // for(var i = 0; i < this.players.length; i++){
-      //   if( == )
-      // }
       return 20 + (matchingPlayer.id * 40) + (round * 20);
     }
 
@@ -155,21 +123,13 @@ export class TournamentComponent {
     context.fillText(playerName, width, height);
   }
 
-  // drawLine(context:CanvasRenderingContext2D, round:number, startWidth:number, startHeight:number, playerType:PlayerType, isWin:boolean){
-  //   var startHeightAdjust:number = 40 * (round + 1);
-  //   var startHeightAdd:number = 20 * round;
-  //   var height: number = playerType == PlayerType.A ? startHeight + startHeightAdd : startHeight + startHeightAdjust + startHeightAdd; 
-  //   context.lineWidth = isWin ? 5: 2;
-  //   this.draw(context, startWidth, height, startWidth + 40, playerType == PlayerType.A ? height  + (20 * (round + 1)): height - (20 * (round + 1)))
-  // }
-
-  draw(context:CanvasRenderingContext2D, startWidth:number, startHeight:number, endWidth:number, endHeight:number, isWin:boolean){
+  drawLine(context:CanvasRenderingContext2D, position:IPosition, isWin:boolean){
     context.beginPath();
     context.lineWidth = isWin ? 5: 2;
-    context.moveTo(startWidth, startHeight);
-    context.lineTo(endWidth, startHeight);
-    context.lineTo(endWidth, endHeight);
-    context.lineTo(endWidth, startHeight);
+    context.moveTo(position.startWidth, position.startHeight);
+    context.lineTo(position.endWidth, position.startHeight);
+    context.lineTo(position.endWidth, position.endHeight);
+    context.lineTo(position.endWidth, position.startHeight);
     context.closePath();
     context.stroke();
   }
@@ -183,11 +143,40 @@ export class TournamentComponent {
     return null;
   }
 
-  isWin(player:MatchingPlayer, matchPlayer:MatchingPlayer):boolean{
+  isWin(player:IMatchingPlayer, matchPlayer:IMatchingPlayer):boolean{
     if(player.score == null || matchPlayer.score == null){
       return false;
     }
     return player.score > matchPlayer.score;
+  }
+
+
+  createTournament():IMatching[]{
+    var matchingList:IMatching[] = [];
+
+    for(var match of this.matchs){
+      var matchDisp:IMatchDisplay = {
+        id:match.id,
+        playerA:{
+          id:match.aId,
+          matchingId:match.aMatchId,
+          score:match.aScore
+        },
+        playerB:{
+          id:match.bId,
+          matchingId:match.bMatchId,
+          score:match.bScore
+        }
+      };
+
+      if(matchingList.length < match.round + 1){
+        while(matchingList.length < match.round + 1){
+          matchingList.push({match:[]});
+        }
+      }
+      matchingList[match.round].match.push(matchDisp);
+    }
+    return matchingList;
   }
 
 }
@@ -196,14 +185,26 @@ enum PlayerType {
   A,B
 }
 
-interface MatchingPlayer{
+interface IPosition{
+  startWidth:number;
+  startHeight:number;
+  endWidth:number;
+  endHeight:number;  
+}
+
+interface IMatchingPlayer{
   id?:number;
   matchingId?:number;
   score?:number;
-  draw?:{
-    startWidth:number;
-    startHeight:number;
-    endWidth:number;
-    endHieght:number;
-   }
+  position?:IPosition
+}
+
+interface IMatchDisplay{
+    id:number;
+    playerA:IMatchingPlayer;
+    playerB:IMatchingPlayer;
+}
+
+interface IMatching{
+  match:IMatchDisplay[]
 }
