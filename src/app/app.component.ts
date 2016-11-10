@@ -30,7 +30,7 @@ import { AppState } from './app.service';
       </span>
       |
       <span>
-        <a [routerLink]=" ['./tournament'] ">
+        <a [routerLink]=" ['./tournament/1'] ">
           Tournament
         </a>
       </span>

@@ -12,7 +12,9 @@ export const ROUTES: Routes = [
   { path: '',      component: BasicComponent },
   { path: 'home',  component: HomeComponent },
   { path: 'basic',      component: BasicComponent },
+  { path: 'basic/:id',      component: BasicComponent },
   { path: 'tournament',  component: TournamentComponent },
+  { path: 'tournament/:id',  component: TournamentComponent },
   { path: 'about', component: AboutComponent },
   {
     path: 'detail', loadChildren: () => System.import('./+detail')

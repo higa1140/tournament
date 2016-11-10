@@ -1,5 +1,5 @@
 <h1>Basic</h1>
-<form>
+<form (submit)="onSubmit($event)">
   <label for="basicTitle">title</label>
   <input id="basicTitle" class="form-control" [value]="title" (input)="title = $event.target.value">
 
@@ -10,5 +10,5 @@
     <label attr.for="basicPlayer{{player.id}}">{{player.id+1}}</label>
     <input id="basicPlayer{{player.id}}" type="text" class="form-control" [value]="player.name" (input)="player.name = $event.target.value">
   </div>
-
+  <input type="submit" class="btn" value="update">
 </form>

@@ -1,11 +1,16 @@
 
     export interface IPlayer{
-        id:number;
+        tournamentId?:number;
+        id?:number;
         name:string;
     }
 
     export class Player {
-        constructor(public id:number, public name:string){
+        constructor(
+            public tournamentId:number,
+            public id:number, 
+            public name:string)
+            {
 
         }
     }
