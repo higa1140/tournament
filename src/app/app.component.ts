@@ -24,6 +24,12 @@ import { AppState } from './app.service';
       </span>
       |
       <span>
+        <a [routerLink]=" ['./login'] ">
+          Login
+        </a>
+      </span>
+      |
+      <span>
         <a [routerLink]=" ['./basic'] ">
           Basic
         </a>

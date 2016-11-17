@@ -35,20 +35,20 @@ export class TournamentComponent {
   }
 
   ngOnInit() {
-    var getPlayerPromise:Promise<IPlayer[]> = 
-    this.playerService.getPlayer(this.tournamentId).then((result:IPlayer[])=>{
-      this.players =result;
-    });
+//     var getPlayerPromise:Promise<IPlayer[]> = 
+//     this.playerService.getPlayer(this.tournamentId).then((result:IPlayer[])=>{
+//       this.players =result;
+//     });
 
-    var getMatchingPromise:Promise<IMatch[]> = 
-    this.matchService.getMatch(this.tournamentId).then((result:IMatch[])=>{
-      this.matchs = result;
-    })
+//     var getMatchingPromise:Promise<IMatch[]> = 
+//     this.matchService.getMatch(this.tournamentId).then((result:IMatch[])=>{
+//       this.matchs = result;
+//     })
 
-Promise.all([getPlayerPromise, getMatchingPromise]).then(()=>{
-  this.matchings = this.createTournament();
-  this.drawTournament();
-});
+// Promise.all([getPlayerPromise, getMatchingPromise]).then(()=>{
+//   this.matchings = this.createTournament();
+//   this.drawTournament();
+// });
     
   }
 

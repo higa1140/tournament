@@ -1,0 +1,5 @@
+<h1>Basic</h1>
+<form (submit)="onSubmit($event)">
+  <label for="basicTitle">title</label>
+  <input id="basicTitle" class="form-control" [value]="title" (input)="title = $event.target.value">
+</form>

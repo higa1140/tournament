@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
+import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
 
 /*
  * Platform and Environment providers/directives/pipes
@@ -14,12 +15,27 @@ import { ROUTES } from './app.routes';
 import { AppComponent } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InternalStateType } from './app.service';
-import { BasicComponent } from './basic';
+import { BasicComponent } from './edit/basic';
+import { PlayerComponent } from './edit/player';
+import { EditMainComponent } from './edit/main';
+
+import { LoginComponent } from './login';
 import { TournamentComponent } from './tournament';
 import { HomeComponent } from './home';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
 import { XLarge } from './home/x-large';
+
+export const a = 'jUvKORe7qF';
+export const b = 'AIzaSyCKqqJf3V33Zx___L1xmLia1o';
+export const c = b.replace("___", "_" + a + "_");
+
+export const databaseURL =  'https://tournament-149404.firebaseio.com'
+
+export const filebaseAuthConfig = {
+  provider: AuthProviders.Password,
+  method: AuthMethods.Password
+}
 
 // Application wide providers
 const APP_PROVIDERS = [
@@ -37,12 +53,17 @@ type StoreType = {
  * `AppModule` is the main entry point into Angular2's bootstraping process
  */
 @NgModule({
-  bootstrap: [ AppComponent ],
+  bootstrap: [ 
+    AppComponent
+  ],
   declarations: [
     AppComponent,
     AboutComponent,
     HomeComponent,
     BasicComponent,
+    PlayerComponent,
+    EditMainComponent,
+    LoginComponent,
     TournamentComponent,
     NoContentComponent,
     XLarge
@@ -51,7 +72,8 @@ type StoreType = {
     BrowserModule,
     FormsModule,
     HttpModule,
-    RouterModule.forRoot(ROUTES, { useHash: true })
+    RouterModule.forRoot(ROUTES, { useHash: true }),
+    AngularFireModule.initializeApp({apiKey:c, databaseURL, authDomain:" ", storageBucket:" "}, filebaseAuthConfig)
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,

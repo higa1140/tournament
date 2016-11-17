@@ -1,0 +1,9 @@
+<form (submit)="onSubmit($event)">
+  <label for="basicCount">count</label>
+  <input id="basicCount" type="number" min="1" max="{{MaxCount}}" class="form-control" [value]="count" (input)="onCountChange($event)">
+
+  <div *ngFor="let player of players; let i = index;" [hidden]="!player.enable">
+    <label attr.for="basicPlayer{{i}}">{{i + 1}}</label>
+    <input id="basicPlayer{{i}}" type="text" class="form-control" [value]="player.name" (input)="player.name = $event.target.value">
+  </div>
+</form>
