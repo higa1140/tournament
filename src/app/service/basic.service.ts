@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import { AngularFire, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 import {Basic, IBasic} from '../model/basic';
 
 
@@ -17,8 +17,8 @@ export class BasicService {
     // console.log();
   }
 
-  getBasic(tournamentId:number): FirebaseListObservable<any> {
-    return this.af.database.list("/items/" + String(tournamentId) + "/data/basic");
+  getBasic(tournamentId:string): FirebaseObjectObservable<any> {
+    return this.af.database.object("/items/" + tournamentId + "/basic");
   }
 
   postBasic(basic:IBasic):Promise<void> {
@@ -27,10 +27,10 @@ export class BasicService {
     return Promise.resolve();
   }
 
-  putBasic(tournamentId:number, basic:IBasic):Promise<any> {
+  putBasic(tournamentId:string, basic:IBasic):Promise<any> {
     // TODO
     // this.basic = basic;
-    this.af.database.list("/items/" + String(tournamentId) + "/data").update("basic", basic);
+    this.af.database.list("/items/" + tournamentId).update("basic", basic);
 
 
     return Promise.resolve();

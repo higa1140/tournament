@@ -9,6 +9,14 @@ export class LoginService {
 
     public login(email:string, password:string): firebase.Promise<FirebaseAuthState>{
         return this.af.auth.login({  email,  password});
-        // this.af.auth.login();
+    }
+
+    public getAuth(){
+        return this.af.auth;
+    }
+
+    public logout(): void {
+        console.log("logout");
+        this.af.auth.logout();
     }
 }

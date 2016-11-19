@@ -1,7 +1,11 @@
 import { Component, Input, Output } from '@angular/core';
+import {Subscription} from 'rxjs';
+
 import { Constant } from '../constant';
 import { BasicService} from '../../service/basic.service';
 import { IBasic } from '../../model/basic';
+
+
 
 /*
  * We're loading this component asynchronously
@@ -19,26 +23,22 @@ import { IBasic } from '../../model/basic';
   providers:[BasicService]
 })
 export class BasicComponent {
-  @Output()
-  title: string;
+  public title: string;
   
   @Input()
-  tournamentId:number;
+  tournamentId:string;
+
+  basicSubscription:Subscription;
 
   constructor(private basicService: BasicService) {
-    // this.tournamentId = null;
   }
 
   ngOnInit() {
     if(this.tournamentId != null && this.tournamentId != undefined){
-      this.basicService.getBasic(this.tournamentId).forEach((data)=>{
-        this.title = data[0]["$value"];
+      this.basicSubscription = this.basicService.getBasic(this.tournamentId).subscribe((data)=>{
+        console.log("aaa");
+        this.title = data.title;
       });
-      // promises.push(this.basicService.getBasic(this.tournamentId).then((result:IBasic)=>{
-      //   this.title = result.title;
-      // }));
-      
-
     } else {
       this.clear();
     }
@@ -53,6 +53,7 @@ export class BasicComponent {
       return false;
     }
 
+    console.log("aaa");
     this.basicService.putBasic(this.tournamentId, {title:this.title});
   }
 
@@ -60,5 +61,9 @@ export class BasicComponent {
   validate(): boolean {
     // TODO
     return true;
+  }
+
+    ngOnDestroy(){
+      this.basicSubscription ? this.basicSubscription.unsubscribe() : null;
   }
 }

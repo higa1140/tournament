@@ -1,4 +1,6 @@
 import { Component, Input, Output } from '@angular/core';
+import {Subscription} from 'rxjs';
+
 import { Constant } from '../../constant';
 import { PlayerService} from '../../service/player.service';
 import { IPlayer } from '../../model/player';
@@ -25,7 +27,9 @@ export class PlayerComponent {
   public readonly  MaxCount:number = 16;
 
   @Input()
-  tournamentId:number;
+  tournamentId:string;
+
+  playerSubscription:Subscription;
 
   constructor(private playerService: PlayerService) {
   }
@@ -33,11 +37,10 @@ export class PlayerComponent {
   ngOnInit() {
     if(this.tournamentId != null && this.tournamentId != undefined){
 
-      this.playerService.getPlayer(this.tournamentId).forEach((data)=>{
+      this.playerSubscription = this.playerService.getPlayer(this.tournamentId).subscribe((data)=>{
         this.players = [];
         for(let player of data){
           this.players.push({
-            id:player.id,
             name:player.name,
             enable:true
           })
@@ -63,7 +66,7 @@ export class PlayerComponent {
     }
 
     for(let i = this.players.length; i < this.MaxCount; i++ ){
-      this.players.push({id:i, name:"player"+(i+1), enable:false})
+      this.players.push({name:"player"+(i+1), enable:false})
     }
     
 
@@ -82,13 +85,26 @@ export class PlayerComponent {
       return false;
     }
 
-    this.playerService.putPlayer(this.players);
+    var updatePlayers = this.getEnablePlayers();
+    this.playerService.putPlayer(this.tournamentId, updatePlayers);
+  }
+
+  getEnablePlayers(){
+    var ret =[];
+    for(var player of this.players){
+      if(player.enable){ret.push({name:player.name})}
+    }
+    return ret;
   }
 
 
   validate(): boolean {
     // TODO
     return true;
+  }
+
+  ngOnDestroy(){
+    this.playerSubscription ? this.playerSubscription.unsubscribe():null;
   }
 }
 

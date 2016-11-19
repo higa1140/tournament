@@ -4,6 +4,8 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 
 import { AppState } from './app.service';
+import { AngularFire } from 'angularfire2';
+import { LoginService } from './service/login.service';
 
 /*
  * App Component
@@ -19,33 +21,26 @@ import { AppState } from './app.service';
     <nav>
       <span>
         <a [routerLink]=" ['./'] ">
-          Index
+          List
         </a>
       </span>
       |
-      <span>
+      <span *ngIf="!isLogin">
         <a [routerLink]=" ['./login'] ">
           Login
         </a>
       </span>
-      |
-      <span>
-        <a [routerLink]=" ['./basic'] ">
-          Basic
+      <span *ngIf="isLogin">
+        <a (click)="logout()">
+          Logout
         </a>
       </span>
       |
-      <span>
-        <a [routerLink]=" ['./tournament/1'] ">
-          Tournament
+      <span *ngIf="isLogin">
+        <a [routerLink]=" ['./register'] ">
+          Register
         </a>
       </span>
-      <!--|
-      <span>
-        <a [routerLink]=" ['./about'] ">
-          About
-        </a>
-      </span>-->
     </nav>
 
     <main>
@@ -62,20 +57,28 @@ import { AppState } from './app.service';
         </a>
       </div>
     </footer>-->
-  `
+  `,
+  providers:[LoginService]
 })
 export class AppComponent {
   angularclassLogo = 'assets/img/angularclass-avatar.png';
   name = 'Angular 2 Webpack Starter';
   url = 'https://twitter.com/AngularClass';
+  isLogin:boolean;
 
-  constructor(
-    public appState: AppState) {
+  constructor(public appState: AppState, private af: AngularFire, private loginService: LoginService) {
 
   }
 
   ngOnInit() {
-    console.log('Initial App State', this.appState.state);
+    var auth = this.loginService.getAuth();
+    auth.subscribe((user)=>{
+      this.isLogin = !!(user);
+    });
+  }
+
+  logout(){
+    this.loginService.logout();
   }
 
 }

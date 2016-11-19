@@ -15,13 +15,14 @@ import { ROUTES } from './app.routes';
 import { AppComponent } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InternalStateType } from './app.service';
-import { BasicComponent } from './edit/basic';
-import { PlayerComponent } from './edit/player';
-import { EditMainComponent } from './edit/main';
+import { ListComponent, KeysPipe } from './list';
+import { BasicComponent } from './input/basic';
+import { PlayerComponent } from './input/player';
+import { RegisterComponent } from './input/register';
+import { EditComponent } from './input/edit';
 
 import { LoginComponent } from './login';
 import { TournamentComponent } from './tournament';
-import { HomeComponent } from './home';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
 import { XLarge } from './home/x-large';
@@ -58,11 +59,12 @@ type StoreType = {
   ],
   declarations: [
     AppComponent,
-    AboutComponent,
-    HomeComponent,
+    AboutComponent,KeysPipe,
+    ListComponent,
     BasicComponent,
     PlayerComponent,
-    EditMainComponent,
+    RegisterComponent,
+    EditComponent,
     LoginComponent,
     TournamentComponent,
     NoContentComponent,

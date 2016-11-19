@@ -5,36 +5,33 @@ import {Player, IPlayer} from '../model/player';
 @Injectable()
 export class PlayerService {
   private players:IPlayer[] = [
-    new Player(0, "player A"),
-    new Player(1, "player B"),
-    new Player(2, "player C"),
-    new Player(3, "player D"),
-    new Player(4, "player E"),
-    new Player(5, "player F"),
-    new Player(6, "player G"),
-    new Player(7, "player H")
+    new Player( "player A"),
+    new Player( "player B"),
+    new Player( "player C"),
+    new Player( "player D"),
+    new Player( "player E"),
+    new Player( "player F"),
+    new Player( "player G"),
+    new Player( "player H")
   ];
 
   constructor(private af: AngularFire){
   }
 
-  getPlayer(tournamentId:number): FirebaseListObservable<IPlayer[]> {
-    return this.af.database.list("/items/" + String(tournamentId) + "/data/player");
+  getPlayer(tournamentId:string): FirebaseListObservable<IPlayer[]> {
+    return this.af.database.list("/items/" + tournamentId + "/player");
     // return Promise.resolve(this.players);
   }
 
-  postPlayer(players:IPlayer[]): Promise<void> {
-    for(let i = 0; i < players.length; i++) {
-      players[i].id = i;
-    }
-
-    this.players = players;
+  postPlayer(tournamentId:string, players:IPlayer[]): Promise<void> {
+    this.af.database.list("/items/" + tournamentId + "/player");
     return Promise.resolve(); 
   }
 
-  putPlayer(players:IPlayer[]): Promise<void> {
-    this.players = players;
-    return Promise.resolve(); 
+  putPlayer(tournamentId:string, players:IPlayer[]): firebase.Promise<void> {
+    var list = this.af.database.list("/items/" + tournamentId);
+    return list.remove("player").then(function(){
+      return list.update("player", players);  
+    });
   }
-
 }

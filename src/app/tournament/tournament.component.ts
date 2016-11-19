@@ -135,12 +135,14 @@ export class TournamentComponent {
   }
 
   getPlayerNameById(id:number):string{
-    for(var player of this.players){
-      if(player.id == id){
-        return player.name;
-      }
-    }
-    return null;
+
+return this.players[id].name;
+    // for(var player of ){
+    //   if(player.id == id){
+    //     return player.name;
+    //   }
+    // }
+    // return null;
   }
 
   isWin(player:IMatchingPlayer, matchPlayer:IMatchingPlayer):boolean{
