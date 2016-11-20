@@ -1,7 +1,4 @@
 export interface IMatch{
-    tournamentId:number; 
-    id:number; 
-    round:number;
     aId?:number;
     aMatchId?:number;
     aScore?:number;
@@ -12,9 +9,6 @@ export interface IMatch{
 
 export class Match{
     constructor(
-        public tournamentId:number, 
-        public id:number, 
-        public round:number,
         public aId:number,
         public aMatchId:number,
         public aScore:number,

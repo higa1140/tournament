@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import {Subscription} from 'rxjs';
+
 import { Constant } from '../constant';
 import {IPlayer} from '../model/player';
 import {IMatch} from '../model/match';
 import {PlayerService} from '../service/player.service';
 import {MatchService} from '../service/match.service';
+import {ItemService} from '../service/item.service';
 
 /*
  * We're loading this component asynchronously
@@ -17,39 +20,30 @@ import {MatchService} from '../service/match.service';
   styles: [`
   `],
   templateUrl: './tournament.component.html',
-  providers: [PlayerService, MatchService]
+  providers: [PlayerService, MatchService, ItemService]
 
 })
 
 export class TournamentComponent {
   public title: string;
 
-  private tournamentId:number;
+  private tournamentId:string;
   public players:IPlayer[];
-  public matchs:IMatch[];
-  public matchings:IMatching[];
+  public matches:IMatchPlayer[][];
+
+  itemSubscription:Subscription;
 
 
-  constructor(public route: ActivatedRoute,private playerService:PlayerService, private matchService:MatchService) {
-    this.tournamentId = Number(route.params["value"]["id"]);
+  constructor(public route: ActivatedRoute,private playerService:PlayerService, private matchService:MatchService, private itemService: ItemService) {
+    this.tournamentId = route.params["value"]["id"];
   }
 
   ngOnInit() {
-//     var getPlayerPromise:Promise<IPlayer[]> = 
-//     this.playerService.getPlayer(this.tournamentId).then((result:IPlayer[])=>{
-//       this.players =result;
-//     });
-
-//     var getMatchingPromise:Promise<IMatch[]> = 
-//     this.matchService.getMatch(this.tournamentId).then((result:IMatch[])=>{
-//       this.matchs = result;
-//     })
-
-// Promise.all([getPlayerPromise, getMatchingPromise]).then(()=>{
-//   this.matchings = this.createTournament();
-//   this.drawTournament();
-// });
-    
+    this.itemSubscription = this.itemService.getItem(this.tournamentId).subscribe((item)=>{
+      this.players = item["player"];
+      this.matches = item["match"];
+      this.drawTournament(); 
+    });
   }
 
   drawTournament(){
@@ -69,26 +63,22 @@ export class TournamentComponent {
     }
     
     // draw tournament
-    for(let i = 0; i < this.matchings.length; i++){
+    for(let i = 0; i  < this.matches.length; i++){
       startWidth = 120 + (i * 40); 
 
-      let matching:IMatching = this.matchings[i];
-
-      // for(let j = 0; j < matching.match.length; j++){
-      for(let match of matching.match){
-        // startHeight =　20 + (j * 80) + (i * 20);
-        let startHeightA = this.getStartHeight(match.playerA,i);
-        let startHeightB = this.getStartHeight(match.playerB,i);
+      for(let match of this.matches[i]){
+        let startHeightA = this.getStartHeight(i, match.aId, match.aMatchId);
+        let startHeightB = this.getStartHeight(i, match.bId, match.bMatchId);
         var startHeightAdjust:number = 40 * (i + 1);
 
-        match.playerA.position ={
+        match.aPosition ={
           startWidth, 
           startHeight:startHeightA, 
           endWidth: startWidth + 40, 
           endHeight:(startHeightA + startHeightB) / 2
         };
         
-        match.playerB.position ={
+        match.bPosition ={
           startWidth, 
           startHeight :startHeightB, 
           endWidth: startWidth + 40, 
@@ -96,25 +86,21 @@ export class TournamentComponent {
         };
 
         this.drawLine(
-          context, match.playerA.position, this.isWin(match.playerA, match.playerB)
+          context, match.aPosition, this.isWin(match.aScore, match.bScore)
         );
 
         this.drawLine(
-          context, match.playerB.position, this.isWin(match.playerB, match.playerA)
+          context, match.bPosition, this.isWin(match.bScore, match.aScore)
         );
       }
     }
   }
 
-  getStartHeight(matchingPlayer:IMatchingPlayer, round:number){
-    if(matchingPlayer.matchingId != undefined  && matchingPlayer.matchingId!=null){
-      for(var match of this.matchings[round-1].match){
-        if(match.id == matchingPlayer.matchingId){
-          return match.playerA.position.endHeight;
-        }
-      }
+  getStartHeight(round:number, playerId:number, matchId:number){
+    if(matchId != undefined  && matchId != null){
+      return this.matches[round-1][matchId].aPosition.endHeight;
     } else {
-      return 20 + (matchingPlayer.id * 40) + (round * 20);
+      return 20 + (playerId * 40) + (round * 20);
     }
 
   }
@@ -135,56 +121,19 @@ export class TournamentComponent {
   }
 
   getPlayerNameById(id:number):string{
-
-return this.players[id].name;
-    // for(var player of ){
-    //   if(player.id == id){
-    //     return player.name;
-    //   }
-    // }
-    // return null;
+    return this.players[id].name;
   }
 
-  isWin(player:IMatchingPlayer, matchPlayer:IMatchingPlayer):boolean{
-    if(player.score == null || matchPlayer.score == null){
+  isWin(playerScore:number, matchPlayerScore:number):boolean{
+    if(playerScore == null || matchPlayerScore == null){
       return false;
     }
-    return player.score > matchPlayer.score;
+    return playerScore > matchPlayerScore;
   }
 
-
-  createTournament():IMatching[]{
-    var matchingList:IMatching[] = [];
-
-    for(var match of this.matchs){
-      var matchDisp:IMatchDisplay = {
-        id:match.id,
-        playerA:{
-          id:match.aId,
-          matchingId:match.aMatchId,
-          score:match.aScore
-        },
-        playerB:{
-          id:match.bId,
-          matchingId:match.bMatchId,
-          score:match.bScore
-        }
-      };
-
-      if(matchingList.length < match.round + 1){
-        while(matchingList.length < match.round + 1){
-          matchingList.push({match:[]});
-        }
-      }
-      matchingList[match.round].match.push(matchDisp);
-    }
-    return matchingList;
+  ngOnDestroy(){
+    this.itemSubscription.unsubscribe();
   }
-
-}
-
-enum PlayerType {
-  A,B
 }
 
 interface IPosition{
@@ -194,19 +143,7 @@ interface IPosition{
   endHeight:number;  
 }
 
-interface IMatchingPlayer{
-  id?:number;
-  matchingId?:number;
-  score?:number;
-  position?:IPosition
-}
-
-interface IMatchDisplay{
-    id:number;
-    playerA:IMatchingPlayer;
-    playerB:IMatchingPlayer;
-}
-
-interface IMatching{
-  match:IMatchDisplay[]
+interface IMatchPlayer extends IMatch{
+  aPosition?:IPosition;
+  bPosition?:IPosition;
 }

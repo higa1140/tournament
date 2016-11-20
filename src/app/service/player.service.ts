@@ -4,16 +4,16 @@ import {Player, IPlayer} from '../model/player';
 
 @Injectable()
 export class PlayerService {
-  private players:IPlayer[] = [
-    new Player( "player A"),
-    new Player( "player B"),
-    new Player( "player C"),
-    new Player( "player D"),
-    new Player( "player E"),
-    new Player( "player F"),
-    new Player( "player G"),
-    new Player( "player H")
-  ];
+  // private players:IPlayer[] = [
+  //   new Player( "player A"),
+  //   new Player( "player B"),
+  //   new Player( "player C"),
+  //   new Player( "player D"),
+  //   new Player( "player E"),
+  //   new Player( "player F"),
+  //   new Player( "player G"),
+  //   new Player( "player H")
+  // ];
 
   constructor(private af: AngularFire){
   }

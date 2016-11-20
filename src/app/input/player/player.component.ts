@@ -80,13 +80,12 @@ export class PlayerComponent {
     }
   }
 
-  onSubmit() {
-    if(!this.validate()){
-      return false;
-    }
+  onSubmit():firebase.Promise<any> {
+    // if(!this.validate()){
+    // }
 
     var updatePlayers = this.getEnablePlayers();
-    this.playerService.putPlayer(this.tournamentId, updatePlayers);
+    return this.playerService.putPlayer(this.tournamentId, updatePlayers);
   }
 
   getEnablePlayers(){

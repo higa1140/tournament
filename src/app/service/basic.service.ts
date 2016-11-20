@@ -27,14 +27,9 @@ export class BasicService {
     return Promise.resolve();
   }
 
-  putBasic(tournamentId:string, basic:IBasic):Promise<any> {
+  putBasic(tournamentId:string, basic:IBasic): firebase.Promise<any> {
     // TODO
     // this.basic = basic;
-    this.af.database.list("/items/" + tournamentId).update("basic", basic);
-
-
-    return Promise.resolve();
-
-
+    return this.af.database.list("/items/" + tournamentId).update("basic", basic);
   }
 }
