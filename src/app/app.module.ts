@@ -25,9 +25,7 @@ import { EditComponent } from './input/edit';
 import { LoginComponent } from './login';
 import { YoutubeComponent } from './youtube';
 import { TournamentComponent } from './tournament';
-import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
-import { XLarge } from './home/x-large';
 
 export const a = 'jUvKORe7qF';
 export const b = 'AIzaSyCKqqJf3V33Zx___L1xmLia1o';
@@ -61,7 +59,7 @@ type StoreType = {
   ],
   declarations: [
     AppComponent,
-    AboutComponent,KeysPipe,
+    KeysPipe,
     ListComponent,
     BasicComponent,
     PlayerComponent,
@@ -70,8 +68,7 @@ type StoreType = {
     LoginComponent,
     YoutubeComponent,
     TournamentComponent,
-    NoContentComponent,
-    XLarge
+    NoContentComponent
   ],
   imports: [ // import Angular's modules
     BrowserModule,
