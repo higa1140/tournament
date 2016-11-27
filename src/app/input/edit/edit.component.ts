@@ -33,10 +33,5 @@ export class EditComponent {
         var players =this.player.getEnablePlayers();
         this.matchService.putMatches(this.tournamentId, this.matchingService.createMatch(players));
        });
-      //  var players =this.player.getEnablePlayers();
-      //  this.matchService.putMatch(this.tournamentId, this.matchingService.createMatch(players));
-      
-      
-      //  this.matchingService.createMatch(this.player.players);
     }
 }

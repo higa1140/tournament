@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
 import {Basic, IBasic} from '../model/basic';
 import {Player, IPlayer} from '../model/player';
+import {Match, IMatch} from '../model/match';
 
 
 
@@ -23,8 +24,8 @@ export class ItemService {
     return this.af.database.object("/items/" + tournamentId);
   }
 
-  postItem(basic:IBasic, players:IPlayer[]):firebase.Promise<void> {
-    return this.af.database.list("/items/").push({basic, player:players});
+  postItem(basic:IBasic, players:IPlayer[], matches:IMatch[]):firebase.Promise<void> {
+    return this.af.database.list("/items/").push({basic, player:players, match:matches});
   }
 
   putitem(tournamentId:string, basic:IBasic):firebase.Promise<any> {
