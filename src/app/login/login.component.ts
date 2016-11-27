@@ -26,11 +26,10 @@ export class LoginComponent{
 
   onSubmit(){
     this.errorMessage = "";
-    // var promise:firebase.Promise<FirebaseAuthState> = 
     
     this.loginService.login(this.mail, this.password)
     .then(()=>{
-      window.location.href = "/";
+      window.location.href = "#/";
     }).catch((e)=>{
       this.errorMessage = e.message;
     });

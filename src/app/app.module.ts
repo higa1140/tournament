@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 import { removeNgStyles, createNewHosts, createInputTransfer } from '@angularclass/hmr';
 import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 /*
  * Platform and Environment providers/directives/pipes
@@ -22,6 +23,7 @@ import { RegisterComponent } from './input/register';
 import { EditComponent } from './input/edit';
 
 import { LoginComponent } from './login';
+import { YoutubeComponent } from './youtube';
 import { TournamentComponent } from './tournament';
 import { AboutComponent } from './about';
 import { NoContentComponent } from './no-content';
@@ -66,6 +68,7 @@ type StoreType = {
     RegisterComponent,
     EditComponent,
     LoginComponent,
+    YoutubeComponent,
     TournamentComponent,
     NoContentComponent,
     XLarge
@@ -75,7 +78,8 @@ type StoreType = {
     FormsModule,
     HttpModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
-    AngularFireModule.initializeApp({apiKey:c, databaseURL, authDomain:" ", storageBucket:" "}, filebaseAuthConfig)
+    AngularFireModule.initializeApp({apiKey:c, databaseURL, authDomain:" ", storageBucket:" "}, filebaseAuthConfig),
+    NgbModule.forRoot()
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection
     ENV_PROVIDERS,

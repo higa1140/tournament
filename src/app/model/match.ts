@@ -4,7 +4,8 @@ export interface IMatch{
     aScore?:number;
     bId?:number;
     bMatchId?:number;
-    bScore?:number; 
+    bScore?:number;
+    url?:string; 
 }
 
 export class Match{
@@ -14,6 +15,7 @@ export class Match{
         public aScore:number,
         public bId:number,
         public bMatchId:number,
-        public bScore:number
+        public bScore:number,
+        public url:string
         ){}
 }

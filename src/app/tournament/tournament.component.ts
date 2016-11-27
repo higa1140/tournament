@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewContainerRef  } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import {NgbModal, ModalDismissReasons, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
+
 import {Subscription} from 'rxjs';
 
 import { Constant } from '../constant';
@@ -8,6 +10,7 @@ import {IMatch} from '../model/match';
 import {PlayerService} from '../service/player.service';
 import {MatchService} from '../service/match.service';
 import {ItemService} from '../service/item.service';
+import { LoginService } from '../service/login.service';
 
 /*
  * We're loading this component asynchronously
@@ -20,11 +23,16 @@ import {ItemService} from '../service/item.service';
   styles: [`
   `],
   templateUrl: './tournament.component.html',
-  providers: [PlayerService, MatchService, ItemService]
+  providers: [PlayerService, MatchService, ItemService,NgbModal, LoginService ]
 
 })
 
 export class TournamentComponent {
+  private static WIDTH = 60;
+  private static PLAYER_HEIGHT = 80;
+  private static PLAYER_WIDTH = 120;
+
+
   public title: string;
 
   private tournamentId:string;
@@ -34,55 +42,86 @@ export class TournamentComponent {
   itemSubscription:Subscription;
 
 
-  constructor(public route: ActivatedRoute,private playerService:PlayerService, private matchService:MatchService, private itemService: ItemService) {
+  public modalParam:{
+    round?:number;
+    matchId?:number;
+
+    aScore?: string;
+    bScore?: string;
+    url?:string;
+    videoId?:string;
+  };
+
+  private activeModal: NgbModalRef;
+
+  private isLogin: boolean;
+
+  constructor(public route: ActivatedRoute,private playerService:PlayerService, private matchService:MatchService, private itemService: ItemService, private modalService: NgbModal
+  , private loginService: LoginService
+  ) {
     this.tournamentId = route.params["value"]["id"];
   }
 
   ngOnInit() {
+    this.modalParam = {};
+
     this.itemSubscription = this.itemService.getItem(this.tournamentId).subscribe((item)=>{
       this.players = item["player"];
       this.matches = item["match"];
       this.drawTournament(); 
     });
+
+    var auth = this.loginService.getAuth();
+    auth.subscribe((user)=>{
+      this.isLogin = !!(user);
+    });
   }
 
   drawTournament(){
     var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
-    canvas.height = 20 + (40 * this.players.length);
+    canvas.height = 20 + (TournamentComponent.PLAYER_HEIGHT * this.players.length);
+    canvas.width = TournamentComponent.PLAYER_WIDTH + ((this.matches.length + 1) * (TournamentComponent.WIDTH + TournamentComponent.PLAYER_WIDTH)) ;
+
     var context:CanvasRenderingContext2D = canvas.getContext('2d');
 
     context.font = "16px 'ＭＳ ゴシック'";
-    var startWidth:number;
+    var left:number;
+    var playerLeft:number;
 
-    var height:number;
+    var top:number;
 
-    // draw playerName
-    for(let i = 0; i < this.players.length; i++){
-      height = 20 + (i * 40); 
-      this.drawPlayer(context, this.players[i].name, 20, height);
-    }
-    
     // draw tournament
-    for(let i = 0; i  < this.matches.length; i++){
-      startWidth = 120 + (i * 40); 
+    for(let round = 0; round  < this.matches.length; round++){
+      playerLeft = round * (TournamentComponent.WIDTH + TournamentComponent.PLAYER_WIDTH);
+      left = playerLeft +  TournamentComponent.PLAYER_WIDTH;
 
-      for(let match of this.matches[i]){
-        let startHeightA = this.getStartHeight(i, match.aId, match.aMatchId);
-        let startHeightB = this.getStartHeight(i, match.bId, match.bMatchId);
-        var startHeightAdjust:number = 40 * (i + 1);
+      for(let match of this.matches[round]){
+        let topA = this.getTop(round, match.aId, match.aMatchId);
+        let topB = this.getTop(round, match.bId, match.bMatchId);
+        // var topAdjust:number = 40 * (i + 1);
+
+        if(match.aId != undefined && match.aId != null){
+          this.drawPlayer(context, this.players[match.aId].name, playerLeft, topA);
+        }
+
+        if(match.bId != undefined && match.bId != null){
+          this.drawPlayer(context, this.players[match.bId].name, playerLeft, topB);
+        }
 
         match.aPosition ={
-          startWidth, 
-          startHeight:startHeightA, 
-          endWidth: startWidth + 40, 
-          endHeight:(startHeightA + startHeightB) / 2
+          playerLeft,
+          left,
+          top: topA, 
+          right: left + TournamentComponent.WIDTH, 
+          bottom:(topA + topB) / 2
         };
         
         match.bPosition ={
-          startWidth, 
-          startHeight :startHeightB, 
-          endWidth: startWidth + 40, 
-          endHeight:(startHeightA + startHeightB) / 2
+          playerLeft,
+          left, 
+          top :topB, 
+          right: left + TournamentComponent.WIDTH, 
+          bottom:(topA + topB) / 2
         };
 
         this.drawLine(
@@ -94,28 +133,44 @@ export class TournamentComponent {
         );
       }
     }
+
+    // Victory
+    var victoryPosition : IPosition = {
+      left: this.matches[this.matches.length-1][0].aPosition.right,
+      right: this.matches[this.matches.length-1][0].aPosition.right + TournamentComponent.WIDTH,
+      top: this.matches[this.matches.length-1][0].aPosition.bottom,
+      bottom: this.matches[this.matches.length-1][0].aPosition.bottom,
+      playerLeft: this.matches[this.matches.length-1][0].aPosition.right + TournamentComponent.WIDTH 
+    };
+
+    var victory: boolean = this.matches[this.matches.length-1][0].aScore !=this.matches[this.matches.length-1][0].bScore;
+    this.drawLine(context, victoryPosition, victory);
+    if(victory){
+      var playerId:number = this.matches[this.matches.length-1][0].aScore >this.matches[this.matches.length-1][0].bScore ? this.matches[this.matches.length-1][0].aId : this.matches[this.matches.length-1][0].bId;
+      this.drawPlayer(context, this.players[playerId].name, victoryPosition.playerLeft, victoryPosition.top);
+    }
   }
 
-  getStartHeight(round:number, playerId:number, matchId:number){
+  getTop(round:number, playerId:number, matchId:number){
     if(matchId != undefined  && matchId != null){
-      return this.matches[round-1][matchId].aPosition.endHeight;
+      return this.matches[round-1][matchId].aPosition.bottom;
     } else {
-      return 20 + (playerId * 40) + (round * 20);
+      return 20 + (playerId * TournamentComponent.PLAYER_HEIGHT) + (round * TournamentComponent.PLAYER_HEIGHT / 2);
     }
 
   }
 
-  drawPlayer(context:CanvasRenderingContext2D, playerName:string, width:number, height:number){
-    context.fillText(playerName, width, height);
+  drawPlayer(context:CanvasRenderingContext2D, playerName:string, left:number, top:number){
+    context.fillText(playerName, left+20, top);
   }
 
   drawLine(context:CanvasRenderingContext2D, position:IPosition, isWin:boolean){
     context.beginPath();
     context.lineWidth = isWin ? 5: 2;
-    context.moveTo(position.startWidth, position.startHeight);
-    context.lineTo(position.endWidth, position.startHeight);
-    context.lineTo(position.endWidth, position.endHeight);
-    context.lineTo(position.endWidth, position.startHeight);
+    context.moveTo(position.left, position.top);
+    context.lineTo(position.right, position.top);
+    context.lineTo(position.right, position.bottom);
+    context.lineTo(position.right, position.top);
     context.closePath();
     context.stroke();
   }
@@ -131,16 +186,80 @@ export class TournamentComponent {
     return playerScore > matchPlayerScore;
   }
 
+  open(content, event) {
+    for(let round = 0; round  < this.matches.length; round++){
+      for(let matchId = 0; matchId < this.matches[round].length; matchId++){
+        if(this.matches[round][matchId].aId == undefined || this.matches[round][matchId].aId == null
+        || this.matches[round][matchId].bId == undefined || this.matches[round][matchId].bId == null){
+          continue;
+        }
+
+        if(event.clientX + window.scrollX >= this.matches[round][matchId].aPosition.playerLeft 
+        && event.clientX + window.scrollX <= this.matches[round][matchId].aPosition.left
+        && event.clientY + window.scrollY >= this.matches[round][matchId].aPosition.top
+        && event.clientY + window.scrollY <= this.matches[round][matchId].bPosition.top){
+          this.modalParam.round = round;
+          this.modalParam.matchId = matchId;
+
+          this.modalParam.aScore = this.matches[this.modalParam.round][this.modalParam.matchId]['aScore'] ? this.matches[this.modalParam.round][this.modalParam.matchId]['aScore'].toString() : '0';
+          this.modalParam.bScore = this.matches[this.modalParam.round][this.modalParam.matchId]['bScore'] ? this.matches[this.modalParam.round][this.modalParam.matchId]['bScore'].toString() : '0';
+          this.modalParam.url = this.matches[this.modalParam.round][this.modalParam.matchId].url || '';
+          this.modalParam.videoId = "50OYgjAEBuY";
+
+          this.activeModal = this.modalService.open(content);
+          return;
+        }
+      }
+    }
+  }
+
+  savePlayer(){console.log("aaaa")}
+  onStateChange(){console.log("bbbb")}
+
+  onSubmit(event){
+    if(!this.isLogin){
+      return;
+    }
+
+    this.matchService.putScore(this.tournamentId, this.modalParam.round, this.modalParam.matchId, Number(this.modalParam.aScore), Number(this.modalParam.bScore), this.modalParam.url).then(()=>{
+      if(this.modalParam.aScore == this.modalParam.bScore){
+        return;
+      }
+
+      if(this.modalParam.round + 1 >= this.matches.length){
+        return;
+      }
+
+      var match= {};
+      var matchId: number = null;
+      var playerId:number = this.modalParam.aScore > this.modalParam.bScore ? this.matches[this.modalParam.round][this.modalParam.matchId].aId : this.matches[this.modalParam.round][this.modalParam.matchId].bId;
+
+      for(var i = 0; i < this.matches[this.modalParam.round+1].length; i++){
+        if(this.matches[this.modalParam.round+1][i].aMatchId == this.modalParam.matchId){
+          match = {aId: playerId};
+          matchId= i;
+        } else if(this.matches[this.modalParam.round+1][i].bMatchId == this.modalParam.matchId){
+          match = match = {bId: playerId};
+          matchId= i;
+        }
+      }
+      return this.matchService.putMatch(this.tournamentId, this.modalParam.round+1, matchId, match);
+    }).then(()=>{
+      this.activeModal.close();
+    });
+  }
+
   ngOnDestroy(){
     this.itemSubscription.unsubscribe();
   }
 }
 
-interface IPosition{
-  startWidth:number;
-  startHeight:number;
-  endWidth:number;
-  endHeight:number;  
+interface IPosition {
+  playerLeft?: number;
+  left:number;
+  top:number;
+  right:number;
+  bottom:number;
 }
 
 interface IMatchPlayer extends IMatch{

@@ -31,7 +31,7 @@ export class EditComponent {
        this.basic.onSubmit();
        this.player.onSubmit().then(()=>{
         var players =this.player.getEnablePlayers();
-        this.matchService.putMatch(this.tournamentId, this.matchingService.createMatch(players));
+        this.matchService.putMatches(this.tournamentId, this.matchingService.createMatch(players));
        });
       //  var players =this.player.getEnablePlayers();
       //  this.matchService.putMatch(this.tournamentId, this.matchingService.createMatch(players));
