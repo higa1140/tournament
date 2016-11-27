@@ -48,7 +48,6 @@ export class TournamentComponent {
 
     aScore?: string;
     bScore?: string;
-    url?:string;
     videoId?:string;
   };
 
@@ -203,8 +202,7 @@ export class TournamentComponent {
 
           this.modalParam.aScore = this.matches[this.modalParam.round][this.modalParam.matchId]['aScore'] ? this.matches[this.modalParam.round][this.modalParam.matchId]['aScore'].toString() : '0';
           this.modalParam.bScore = this.matches[this.modalParam.round][this.modalParam.matchId]['bScore'] ? this.matches[this.modalParam.round][this.modalParam.matchId]['bScore'].toString() : '0';
-          this.modalParam.url = this.matches[this.modalParam.round][this.modalParam.matchId].url || '';
-          this.modalParam.videoId = "50OYgjAEBuY";
+          this.modalParam.videoId = this.matches[this.modalParam.round][this.modalParam.matchId].videoId || '';;
 
           this.activeModal = this.modalService.open(content);
           return;
@@ -221,7 +219,7 @@ export class TournamentComponent {
       return;
     }
 
-    this.matchService.putScore(this.tournamentId, this.modalParam.round, this.modalParam.matchId, Number(this.modalParam.aScore), Number(this.modalParam.bScore), this.modalParam.url).then(()=>{
+    this.matchService.putScore(this.tournamentId, this.modalParam.round, this.modalParam.matchId, Number(this.modalParam.aScore), Number(this.modalParam.bScore), this.modalParam.videoId).then(()=>{
       if(this.modalParam.aScore == this.modalParam.bScore){
         return;
       }

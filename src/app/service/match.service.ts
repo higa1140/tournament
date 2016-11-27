@@ -20,8 +20,8 @@ export class MatchService {
     return this.af.database.list("/items/" + tournamentId + "/match/" + String(round)).update(String(battle), match);  
   }
 
-  putScore(tournamentId:string, round:number, battle:number, aScore:number, bScore:number, url: string){
-    return this.af.database.list("/items/" + tournamentId + "/match/" + String(round)).update(String(battle), {aScore, bScore, url});  
+  putScore(tournamentId:string, round:number, battle:number, aScore:number, bScore:number, videoId: string){
+    return this.af.database.list("/items/" + tournamentId + "/match/" + String(round)).update(String(battle), {aScore, bScore, videoId});  
   }
 
   putMatches(tournamentId:string, matches:IMatch[][]){

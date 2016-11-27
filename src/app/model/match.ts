@@ -5,7 +5,7 @@ export interface IMatch{
     bId?:number;
     bMatchId?:number;
     bScore?:number;
-    url?:string; 
+    videoId?:string; 
 }
 
 export class Match{
@@ -16,6 +16,6 @@ export class Match{
         public bId:number,
         public bMatchId:number,
         public bScore:number,
-        public url:string
+        public videoId:string
         ){}
 }
