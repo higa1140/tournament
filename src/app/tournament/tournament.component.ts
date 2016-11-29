@@ -99,37 +99,47 @@ export class TournamentComponent {
         let topB = this.getTop(round, match.bId, match.bMatchId);
         // var topAdjust:number = 40 * (i + 1);
 
-        if(match.aId != undefined && match.aId != null){
+        if(match.aId != undefined && match.aId != null && !match.aSeed){
           this.drawPlayer(context, this.players[match.aId].name, playerLeft, topA);
+        } else {
+          this.drawLine(
+            context, {left:playerLeft, right:playerLeft + TournamentComponent.PLAYER_WIDTH, top:topA, bottom:topA}, false
+          );  
         }
 
-        if(match.bId != undefined && match.bId != null){
+        if(match.bId != undefined && match.bId != null && match.bId != -1 && !match.bSeed){
           this.drawPlayer(context, this.players[match.bId].name, playerLeft, topB);
+        } else {
+          this.drawLine(
+            context, {left:playerLeft, right:playerLeft + TournamentComponent.PLAYER_WIDTH, top:topB, bottom:topB}, false
+          );  
         }
 
-        match.aPosition ={
+        match.aPosition = {
           playerLeft,
-          left,
+          left: !match.aSeed ? left : left - TournamentComponent.PLAYER_WIDTH - TournamentComponent.WIDTH,
           top: topA, 
-          right: left + TournamentComponent.WIDTH, 
-          bottom:(topA + topB) / 2
-        };
-        
-        match.bPosition ={
-          playerLeft,
-          left, 
-          top :topB, 
-          right: left + TournamentComponent.WIDTH, 
-          bottom:(topA + topB) / 2
+          right: match.bId != -1 ? left + TournamentComponent.WIDTH : left + TournamentComponent.WIDTH + TournamentComponent.PLAYER_WIDTH, 
+          bottom: match.bId != -1 ? (topA + topB) / 2 : topA
         };
 
-        this.drawLine(
-          context, match.aPosition, this.isWin(match.aScore, match.bScore)
-        );
+        if(match.bId != -1){
+          this.drawLine(
+            context, match.aPosition, this.isWin(match.aScore, match.bScore)
+          );
 
-        this.drawLine(
-          context, match.bPosition, this.isWin(match.bScore, match.aScore)
-        );
+          match.bPosition ={
+            playerLeft,
+            left: !match.bSeed ? left : left - TournamentComponent.PLAYER_WIDTH - TournamentComponent.WIDTH, 
+            top :topB, 
+            right: left + TournamentComponent.WIDTH, 
+            bottom:(topA + topB) / 2
+          };
+          this.drawLine(
+            context, match.bPosition, this.isWin(match.bScore, match.aScore)
+          );
+        }
+
       }
     }
 

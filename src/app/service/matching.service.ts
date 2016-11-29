@@ -5,105 +5,73 @@ import {Match, IMatch} from '../model/match';
 
 @Injectable()
 export class MatchingService {
-  private matching = [
-    {
-      match:
-      [
-        {
-          id:0,
-          playerA:{id:0, score:3}, 
-          playerB:{id:1,score:2}
-        },
-        {
-          id:1,
-          playerA:{id:2, score:0}, 
-          playerB:{id:3,score:3}
-        },
-        {
-          id:2,
-          playerA:{id:4, score:3}, 
-          playerB:{id:5,score:2}
-        },
-        {
-          id:3,
-          playerA:{id:6, score:1}, 
-          playerB:{id:7,score:0}
-        }
-      ]
-    },
-    {match:[
-      {
-        id:4,
-        playerA:{ matchingId:0,score:1},
-        playerB:{ matchingId:1,score:2}
-      },
-      {
-        id:5,
-        playerA:{ matchingId:2,score:2},
-        playerB:{ matchingId:3,score:3}
-      }
-    ]},
-    {match:[
-      {
-        id:6,
-        playerA:{ matchingId:4},
-        playerB:{ matchingId:5}
-      }
-    ]}
-  ];
-
-  // getMatching(tournamentId:number): Promise<{}[]> {
-  //   return Promise.resolve(this.matching);
-  // }
-
-  // createMatch(players:IPlayer[]):IMatch[]{
-  //   var ret:IMatch[] = [];
-
-
-
-
-  //   var round:number = 0;
-  //   // TODO 2乗の余り
-
-  //   // 1回戦
-  //   for(let i = 0; i < players.length; i++){
-  //     ret.push({round, aId:i, bId:i+1 });
-  //   }
-
-  //   // 2回戦以降
-
-
-  //   return ret;
-  // }
-
 
   createMatch(players:IPlayer[]):IMatch[][]{
     var ret:IMatch[][]=[];
     var round:number = 0;
-    // TODO 2乗の余り
     // 1回戦
     ret[round] = [];
     var i = 0;
-    // var id = 0;
+    var a = this.getSeed(players.length, this.getLimit(players));
 
-    console.log(players.length);
-    while(i < players.length){
-      ret[round].push({aId:i, bId:i+1});
-      i += 2;
+    for(let j = 0; j < a.length; j++){
+      if(a[j] == 2){
+        ret[round].push({aId:i, bId:i+1});
+      } else {
+        ret[round].push({aId:i, bId:-1});
+      }
+
+      i += a[j];
     }
 
     while(ret[round].length > 1){
       round++;
       ret[round] = [];
       i = 0;
+      
       while(i < ret[round - 1].length){
-        ret[round].push({aMatchId:i, bMatchId:i+1});
+        let match:IMatch = {aMatchId:i, bMatchId:i+1};
+
+        if(ret[round-1][i].bId == -1){
+          match.aId = ret[round-1][i].aId;
+          match.aSeed = true;
+        }
+
+        if(ret[round-1][i+1].bId == -1){
+          match.bId = ret[round-1][i+1].aId;
+          match.bSeed = true;
+        }
+
+        ret[round].push(match);
         i += 2;
       }
     }
-
-
-    console.log(ret);
     return ret;
+  }
+
+  getSeed (count:number, limit:number): number[] {
+    if(!limit){
+      return [count];
+    }
+		
+		var j = Math.floor(count / 2);
+		
+		return this.getSeed(count - j, limit - 1).concat(this.getSeed(j, limit - 1));
+	}
+
+  getLimit(players:IPlayer[]): number{
+    var mod:boolean= false;
+    var len:number = players.length;
+    var ret:number = 0;
+
+    while (len > 1){
+      if(len % 2 > 0){
+        mod = true;
+      }
+      len = Math.floor(len / 2);
+      ret++;
+    }
+
+    return ret + (mod ? 1 : 0) - 1;
   }
 }
