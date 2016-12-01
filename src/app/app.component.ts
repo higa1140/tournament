@@ -4,7 +4,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 
 import { AppState } from './app.service';
-import { AngularFire } from 'angularfire2';
+import { AngularFire, AngularFireAuth } from 'angularfire2';
 import { LoginService } from './service/login.service';
 
 /*
@@ -42,7 +42,6 @@ import { LoginService } from './service/login.service';
         </a>
       </span>
     </nav>
-
     <main>
       <router-outlet></router-outlet>
     </main>
@@ -71,8 +70,7 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    var auth = this.loginService.getAuth();
-    auth.subscribe((user)=>{
+    this.loginService.getAuth().onAuthStateChanged((user)=>{
       this.isLogin = !!(user);
     });
   }

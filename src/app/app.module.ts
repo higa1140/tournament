@@ -75,7 +75,12 @@ type StoreType = {
     FormsModule,
     HttpModule,
     RouterModule.forRoot(ROUTES, { useHash: true }),
-    AngularFireModule.initializeApp({apiKey:c, databaseURL, authDomain:" ", storageBucket:" "}, filebaseAuthConfig),
+    AngularFireModule.initializeApp(
+      {apiKey:c, 
+        databaseURL, 
+        authDomain:"tournament-149404.firebaseapp.com", 
+        storageBucket:"tournament-149404.appspot.com"
+      }, filebaseAuthConfig),
     NgbModule.forRoot()
   ],
   providers: [ // expose our Services and Providers into Angular's dependency injection

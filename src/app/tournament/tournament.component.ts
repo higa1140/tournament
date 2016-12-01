@@ -70,8 +70,7 @@ export class TournamentComponent {
       this.drawTournament(); 
     });
 
-    var auth = this.loginService.getAuth();
-    auth.subscribe((user)=>{
+    this.loginService.getAuth().onAuthStateChanged((user)=>{
       this.isLogin = !!(user);
     });
   }

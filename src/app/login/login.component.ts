@@ -28,7 +28,7 @@ export class LoginComponent{
     this.errorMessage = "";
     
     this.loginService.login(this.mail, this.password)
-    .then(()=>{
+    .then(function(result){
       window.location.href = "#/";
     }).catch((e)=>{
       this.errorMessage = e.message;
