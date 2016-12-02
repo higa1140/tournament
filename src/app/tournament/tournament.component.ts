@@ -213,7 +213,7 @@ export class TournamentComponent {
           this.modalParam.bScore = this.matches[this.modalParam.round][this.modalParam.matchId]['bScore'] ? this.matches[this.modalParam.round][this.modalParam.matchId]['bScore'].toString() : '0';
           this.modalParam.videoId = this.matches[this.modalParam.round][this.modalParam.matchId].videoId || '';;
 
-          this.activeModal = this.modalService.open(content);
+          this.activeModal = this.modalService.open(content, {size: "sm"});
           return;
         }
       }

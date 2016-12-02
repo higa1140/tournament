@@ -31,7 +31,7 @@ export class YoutubeComponent{
   loadComplete(){
     this.player = new (<any>window).YT.Player('video', {
         //   height: '360',
-        //   width: '640',
+           width: '100%',
           videoId: this.videoId,
           events: {
             'onReady': this.onPlayerReady,
