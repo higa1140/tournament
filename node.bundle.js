@@ -1,5 +1,5 @@
 var ac_node =
-webpackJsonpac__name_([2],{
+webpackJsonpac__name_([0],{
 
 /***/ "./node_modules/@angular/common/index.js":
 /***/ function(module, exports, __webpack_require__) {
@@ -46966,9 +46966,9 @@ var AngularProfiler = (function () {
         var record = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__facade_lang__["b" /* isPresent */])(config) && config['record'];
         var profileName = 'Change Detection';
         // Profiler is not available in Android browsers, nor in IE 9 without dev tools opened
-        var isProfilerAvailable = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__facade_lang__["b" /* isPresent */])(__WEBPACK_IMPORTED_MODULE_2__facade_browser__["a" /* window */].console.profile);
+        var isProfilerAvailable = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__facade_lang__["b" /* isPresent */])(__WEBPACK_IMPORTED_MODULE_2__facade_browser__["window"].console.profile);
         if (record && isProfilerAvailable) {
-            __WEBPACK_IMPORTED_MODULE_2__facade_browser__["a" /* window */].console.profile(profileName);
+            __WEBPACK_IMPORTED_MODULE_2__facade_browser__["window"].console.profile(profileName);
         }
         var start = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__dom_dom_adapter__["a" /* getDOM */])().performanceNow();
         var numTicks = 0;
@@ -46982,11 +46982,11 @@ var AngularProfiler = (function () {
             // while in fact there is:
             //
             // https://developer.mozilla.org/en-US/docs/Web/API/Console/profileEnd
-            __WEBPACK_IMPORTED_MODULE_2__facade_browser__["a" /* window */].console.profileEnd(profileName);
+            __WEBPACK_IMPORTED_MODULE_2__facade_browser__["window"].console.profileEnd(profileName);
         }
         var msPerTick = (end - start) / numTicks;
-        __WEBPACK_IMPORTED_MODULE_2__facade_browser__["a" /* window */].console.log("ran " + numTicks + " change detection cycles");
-        __WEBPACK_IMPORTED_MODULE_2__facade_browser__["a" /* window */].console.log(__WEBPACK_IMPORTED_MODULE_3__facade_lang__["o" /* NumberWrapper */].toFixed(msPerTick, 2) + " ms per check");
+        __WEBPACK_IMPORTED_MODULE_2__facade_browser__["window"].console.log("ran " + numTicks + " change detection cycles");
+        __WEBPACK_IMPORTED_MODULE_2__facade_browser__["window"].console.log(__WEBPACK_IMPORTED_MODULE_3__facade_lang__["o" /* NumberWrapper */].toFixed(msPerTick, 2) + " ms per check");
         return new ChangeDetectionPerfRecord(msPerTick, numTicks);
     };
     return AngularProfiler;
@@ -48410,18 +48410,18 @@ function _computeStyle(element, prop) {
 /***/ function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(exports, "a", function() { return win; });
-/* unused harmony export document */
-/* unused harmony export location */
-/* unused harmony export gc */
-/* unused harmony export performance */
-/* unused harmony export Event */
-/* unused harmony export MouseEvent */
-/* unused harmony export KeyboardEvent */
-/* unused harmony export EventTarget */
-/* unused harmony export History */
-/* unused harmony export Location */
-/* unused harmony export EventListener */
+/* harmony export (binding) */ __webpack_require__.d(exports, "window", function() { return win; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "document", function() { return document; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "location", function() { return location; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "gc", function() { return gc; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "performance", function() { return performance; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "Event", function() { return Event; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "MouseEvent", function() { return MouseEvent; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "KeyboardEvent", function() { return KeyboardEvent; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "EventTarget", function() { return EventTarget; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "History", function() { return History; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "Location", function() { return Location; });
+/* harmony export (binding) */ __webpack_require__.d(exports, "EventListener", function() { return EventListener; });
 /**
  * @license
  * Copyright Google Inc. All Rights Reserved.
