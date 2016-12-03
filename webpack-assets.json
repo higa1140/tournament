@@ -1,11 +1,11 @@
 {
   "node": {
-    "js": "/tournament/node.bundle.js"
+    "js": "/tournament/node.bundle.min.js"
   },
   "main": {
-    "js": "/tournament/main.bundle.js"
+    "js": "/tournament/main.bundle.min.js"
   },
   "polyfills": {
-    "js": "/tournament/polyfills.bundle.js"
+    "js": "/tournament/polyfills.bundle.min.js"
   }
 }
