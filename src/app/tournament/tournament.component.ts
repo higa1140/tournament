@@ -32,7 +32,7 @@ export class TournamentComponent {
   private static PLAYER_HEIGHT = 60;
   private static PLAYER_WIDTH = 110;
 
-  private static TITLE_HEIGHT = 0;
+  private static TITLE_HEIGHT = 100;
 
 
   public title: string;
@@ -91,8 +91,8 @@ export class TournamentComponent {
     var top:number;
 
     // draw title
-    // context.font = "36px 'ＭＳ ゴシック'";
-    // context.fillText(this.title, 60, 30);
+    context.font = "36px 'ＭＳ ゴシック'";
+    context.fillText(this.title, 60, 30);
 
     // draw tournament
     for(let round = 0; round  < this.matches.length; round++){
