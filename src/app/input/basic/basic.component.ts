@@ -36,7 +36,6 @@ export class BasicComponent {
   ngOnInit() {
     if(this.tournamentId != null && this.tournamentId != undefined){
       this.basicSubscription = this.basicService.getBasic(this.tournamentId).subscribe((data)=>{
-        console.log("aaa");
         this.title = data.title;
       });
     } else {
@@ -53,7 +52,6 @@ export class BasicComponent {
       return false;
     }
 
-    console.log("aaa");
     this.basicService.putBasic(this.tournamentId, {title:this.title});
   }
 

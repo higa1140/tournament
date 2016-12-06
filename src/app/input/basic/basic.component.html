@@ -1,5 +1,4 @@
-<h1>Basic</h1>
-<form (submit)="onSubmit($event)">
+<div class="form-group">
   <label for="basicTitle">title</label>
-  <input id="basicTitle" class="form-control" [value]="title" (input)="title = $event.target.value">
-</form>
+  <input id="basicTitle" required class="form-control" [(ngModel)]="title">
+</div>
