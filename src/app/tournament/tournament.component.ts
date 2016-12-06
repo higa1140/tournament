@@ -103,6 +103,7 @@ export class TournamentComponent {
         let topA = this.getTop(round, match.aId, match.aMatchId);
         let topB = this.getTop(round, match.bId, match.bMatchId);
 
+        // draw a-player
         if(match.aId != undefined && match.aId != null && !match.aSeed){
           this.drawPlayer(context, this.players[match.aId].name, playerLeft, topA);
         } else {
@@ -111,6 +112,7 @@ export class TournamentComponent {
           );  
         }
 
+        // draw b-player
         if(match.bId != undefined && match.bId != null && match.bId != -1 && !match.bSeed){
           this.drawPlayer(context, this.players[match.bId].name, playerLeft, topB);
         } else {
@@ -120,7 +122,7 @@ export class TournamentComponent {
         }
 
         match.aPosition = {
-          playerLeft,
+          playerLeft: !match.aSeed ? playerLeft : 0,
           left: !match.aSeed ? left : left - TournamentComponent.PLAYER_WIDTH - TournamentComponent.WIDTH,
           top: topA, 
           right: match.bId != -1 ? left + TournamentComponent.WIDTH : left + TournamentComponent.WIDTH + TournamentComponent.PLAYER_WIDTH, 
@@ -133,7 +135,7 @@ export class TournamentComponent {
           );
 
           match.bPosition ={
-            playerLeft,
+            playerLeft: !match.bSeed ? playerLeft : 0,
             left: !match.bSeed ? left : left - TournamentComponent.PLAYER_WIDTH - TournamentComponent.WIDTH, 
             top :topB, 
             right: left + TournamentComponent.WIDTH, 
@@ -202,10 +204,11 @@ export class TournamentComponent {
 
   open(content, event) {
     var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
+
     for(let round = 0; round  < this.matches.length; round++){
       for(let matchId = 0; matchId < this.matches[round].length; matchId++){
         if(this.matches[round][matchId].aId == undefined || this.matches[round][matchId].aId == null
-        || this.matches[round][matchId].bId == undefined || this.matches[round][matchId].bId == null){
+        || this.matches[round][matchId].bId == undefined || this.matches[round][matchId].bId == null || this.matches[round][matchId].bId == -1){
           continue;
         }
 
@@ -214,6 +217,8 @@ export class TournamentComponent {
         && event.clientY + window.scrollY - canvas.offsetTop >= this.matches[round][matchId].aPosition.top
         && event.clientY + window.scrollY - canvas.offsetTop <= this.matches[round][matchId].bPosition.top
         && (this.isLogin || this.matches[round][matchId].videoId) ){
+
+
 
           this.modalParam.round = round;
           this.modalParam.matchId = matchId;
