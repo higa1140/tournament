@@ -43,9 +43,9 @@ import { LoginService } from './service/login.service';
   providers:[LoginService]
 })
 export class AppComponent {
-  angularclassLogo = 'assets/img/angularclass-avatar.png';
-  name = 'Angular 2 Webpack Starter';
-  url = 'https://twitter.com/AngularClass';
+  angularclassLogo = 'assets/img/crown.png';
+  name = 'Tournament App';
+  url = 'https://higa1140.github.io/tournament';
   isLogin:boolean;
 
   constructor(public appState: AppState, private af: AngularFire, private loginService: LoginService) {
