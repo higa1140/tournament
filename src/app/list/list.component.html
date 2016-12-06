@@ -3,11 +3,11 @@
       <th>title</th>
   </tr>
   <tr *ngFor="let item of itemList|keys">
-    
     <td *ngIf="item.key != '$key' && item.key != '$exists'">
-      <!--<a [routerLink]=" ['./edit/' + item.key]">{{item.value.basic.title}}</a>-->
       <a [routerLink]=" ['./tournament/' + item.key]">{{item.value.basic.title}}</a>
-      <a [routerLink]=" ['./edit/' + item.key]">{{edit}}</a>
+    </td>
+    <td *ngIf="item.key != '$key' && item.key != '$exists' && isLogin">
+      <a class="btn btn-default" [routerLink]=" ['./edit/' + item.key]">edit</a>
     </td>
   </tr>
 </table>

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import {Subscription} from 'rxjs';
 
 import { ItemService } from '../service/item.service';
+import { LoginService } from '../service/login.service';
 
 
 @Component({
@@ -10,22 +11,27 @@ import { ItemService } from '../service/item.service';
   styles: [`
   `],
   templateUrl: './list.component.html',
-  providers:[ItemService]
+  providers:[ItemService,LoginService]
 })
 export class ListComponent{
 
+  isLogin:boolean;
   itemList;
   errorMessage:string;
 
   itemSubscription:Subscription;
 
 
-  constructor(public route: ActivatedRoute, private itemService: ItemService) {
+  constructor(public route: ActivatedRoute, private itemService: ItemService, private loginService: LoginService) {
   }
 
   ngOnInit(){
     this.itemSubscription  = this.itemService.getItemList().subscribe((items)=>{
       this.itemList = items;
+    });
+
+    this.loginService.getAuth().onAuthStateChanged((user)=>{
+      this.isLogin = !!(user);
     });
   }
 
