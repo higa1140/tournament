@@ -19,16 +19,20 @@ export class YoutubeComponent{
     constructor(){}
 
   ngOnInit() {
-    const doc = window.document;
-    let playerApiScript = doc.createElement("script");
-    (<any>window).onYouTubeIframeAPIReady = ()=>{this.loadComplete()}; 
-    // playerApiScript.onload = this.loadComplete;
-    playerApiScript.type = "text/javascript";
-    playerApiScript.src = "http://www.youtube.com/iframe_api";
-    doc.head.appendChild(playerApiScript);
+    if((<any>window).YT){
+      this.setPlayer();
+    } else {
+      const doc = window.document;
+      let playerApiScript: HTMLScriptElement = doc.createElement("script");
+      window.onYouTubeIframeAPIReady = ()=>{
+        this.setPlayer()};
+      playerApiScript.type = "text/javascript";
+      playerApiScript.src = "//www.youtube.com/iframe_api";
+      doc.head.appendChild(playerApiScript);
+    }
   }
 
-  loadComplete(){
+  setPlayer(){
     this.player = new (<any>window).YT.Player('video', {
         //   height: '360',
            width: '100%',
