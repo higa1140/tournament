@@ -28,9 +28,11 @@ import { LoginService } from '../service/login.service';
 })
 
 export class TournamentComponent {
-  private static WIDTH = 60;
-  private static PLAYER_HEIGHT = 80;
-  private static PLAYER_WIDTH = 120;
+  private static WIDTH = 50;
+  private static PLAYER_HEIGHT = 60;
+  private static PLAYER_WIDTH = 110;
+
+  private static TITLE_HEIGHT = 0;
 
 
   public title: string;
@@ -40,7 +42,6 @@ export class TournamentComponent {
   public matches:IMatchPlayer[][];
 
   itemSubscription:Subscription;
-
 
   public modalParam:{
     round?:number;
@@ -65,9 +66,10 @@ export class TournamentComponent {
     this.modalParam = {};
 
     this.itemSubscription = this.itemService.getItem(this.tournamentId).subscribe((item)=>{
+      this.title = item["basic"]["title"];
       this.players = item["player"];
       this.matches = item["match"];
-      this.drawTournament(); 
+      this.drawTournament();
     });
 
     this.loginService.getAuth().onAuthStateChanged((user)=>{
@@ -77,16 +79,20 @@ export class TournamentComponent {
 
   drawTournament(){
     var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
-    canvas.height = 20 + (TournamentComponent.PLAYER_HEIGHT * this.players.length);
+    canvas.height = 20 + TournamentComponent.TITLE_HEIGHT + (TournamentComponent.PLAYER_HEIGHT * this.players.length);
     canvas.width = TournamentComponent.PLAYER_WIDTH + ((this.matches.length + 1) * (TournamentComponent.WIDTH + TournamentComponent.PLAYER_WIDTH)) ;
 
     var context:CanvasRenderingContext2D = canvas.getContext('2d');
 
-    context.font = "16px 'ＭＳ ゴシック'";
+    
     var left:number;
     var playerLeft:number;
 
     var top:number;
+
+    // draw title
+    // context.font = "36px 'ＭＳ ゴシック'";
+    // context.fillText(this.title, 60, 30);
 
     // draw tournament
     for(let round = 0; round  < this.matches.length; round++){
@@ -96,7 +102,6 @@ export class TournamentComponent {
       for(let match of this.matches[round]){
         let topA = this.getTop(round, match.aId, match.aMatchId);
         let topB = this.getTop(round, match.bId, match.bMatchId);
-        // var topAdjust:number = 40 * (i + 1);
 
         if(match.aId != undefined && match.aId != null && !match.aSeed){
           this.drawPlayer(context, this.players[match.aId].name, playerLeft, topA);
@@ -159,16 +164,17 @@ export class TournamentComponent {
     }
   }
 
-  getTop(round:number, playerId:number, matchId:number){
-    if(matchId != undefined  && matchId != null){
-      return this.matches[round-1][matchId].aPosition.bottom;
+  getTop(round:number, playerId:number, childMatchId:number){
+    if(childMatchId != undefined  && childMatchId != null){
+      return this.matches[round-1][childMatchId].aPosition.bottom;
     } else {
-      return 20 + (playerId * TournamentComponent.PLAYER_HEIGHT) + (round * TournamentComponent.PLAYER_HEIGHT / 2);
+      return 20 + TournamentComponent.TITLE_HEIGHT + (playerId * TournamentComponent.PLAYER_HEIGHT) + (round * TournamentComponent.PLAYER_HEIGHT / 2);
     }
 
   }
 
   drawPlayer(context:CanvasRenderingContext2D, playerName:string, left:number, top:number){
+    context.font = "16px 'ＭＳ ゴシック'";
     context.fillText(playerName, left+20, top);
   }
 
@@ -195,6 +201,7 @@ export class TournamentComponent {
   }
 
   open(content, event) {
+    var canvas:HTMLCanvasElement = <HTMLCanvasElement>document.getElementById("canvas");
     for(let round = 0; round  < this.matches.length; round++){
       for(let matchId = 0; matchId < this.matches[round].length; matchId++){
         if(this.matches[round][matchId].aId == undefined || this.matches[round][matchId].aId == null
@@ -202,10 +209,12 @@ export class TournamentComponent {
           continue;
         }
 
-        if(event.clientX + window.scrollX >= this.matches[round][matchId].aPosition.playerLeft 
-        && event.clientX + window.scrollX <= this.matches[round][matchId].aPosition.left
-        && event.clientY + window.scrollY >= this.matches[round][matchId].aPosition.top
-        && event.clientY + window.scrollY <= this.matches[round][matchId].bPosition.top){
+        if(event.clientX + window.scrollX - canvas.offsetLeft >= this.matches[round][matchId].aPosition.playerLeft 
+        && event.clientX + window.scrollX - canvas.offsetLeft <= this.matches[round][matchId].aPosition.left
+        && event.clientY + window.scrollY - canvas.offsetTop >= this.matches[round][matchId].aPosition.top
+        && event.clientY + window.scrollY - canvas.offsetTop <= this.matches[round][matchId].bPosition.top
+        && (this.isLogin || this.matches[round][matchId].videoId) ){
+
           this.modalParam.round = round;
           this.modalParam.matchId = matchId;
 
