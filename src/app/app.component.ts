@@ -18,31 +18,14 @@ import { LoginService } from './service/login.service';
     './app.component.css'
   ],
   template: `
-    <nav>
-      <span>
-        <a [routerLink]=" ['./'] ">
-          List
-        </a>
-      </span>
-      |
-      <span *ngIf="!isLogin">
-        <a [routerLink]=" ['./login'] ">
-          Login
-        </a>
-      </span>
-      <span *ngIf="isLogin">
-        <a (click)="logout()">
-          Logout
-        </a>
-      </span>
-      |
-      <span *ngIf="isLogin">
-        <a [routerLink]=" ['./register'] ">
-          Register
-        </a>
-      </span>
-    </nav>
-    <main>
+<ul class="nav nav-tabs">
+  <li role="presentation"><a [routerLink]=" ['./'] ">List</a></li>
+  <li role="presentation" *ngIf="!isLogin"><a [routerLink]=" ['./login'] ">Login</a></li>
+  <li role="presentation" *ngIf="isLogin"><a (click)="logout()">Logout</a></li>
+  <li role="presentation" *ngIf="isLogin"><a [routerLink]=" ['./register'] ">Register</a></li>
+</ul>
+
+    <main style="padding:10px">
       <router-outlet></router-outlet>
     </main>
 
