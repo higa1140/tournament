@@ -62,6 +62,10 @@ export class TournamentComponent {
     this.tournamentId = route.params["value"]["id"];
   }
 
+  setZoom() {
+    document.getElementById("canvas").style.zoom = ((window.innerWidth / document.getElementById("canvas").clientWidth) * 100).toString() + "%";
+  }
+
   ngOnInit() {
     this.modalParam = {};
 
@@ -70,6 +74,14 @@ export class TournamentComponent {
       this.players = item["player"];
       this.matches = item["match"];
       this.drawTournament();
+
+      this.setZoom();
+
+
+      window.addEventListener('resize',  (event) => {
+        this.setZoom();
+      });
+
     });
 
     this.loginService.getAuth().onAuthStateChanged((user)=>{
@@ -113,13 +125,17 @@ export class TournamentComponent {
         }
 
         // draw b-player
-        if(match.bId != undefined && match.bId != null && match.bId != -1 && !match.bSeed){
-          this.drawPlayer(context, this.players[match.bId].name, playerLeft, topB);
-        } else {
-          this.drawLine(
-            context, {left:playerLeft, right:playerLeft + TournamentComponent.PLAYER_WIDTH, top:topB, bottom:topB}, false
-          );  
+        if(match.bId != -1){
+          if(match.bId != undefined && match.bId != null && !match.bSeed){
+            this.drawPlayer(context, this.players[match.bId].name, playerLeft, topB);
+          } else {
+
+            this.drawLine(
+              context, {left:playerLeft, right:playerLeft + TournamentComponent.PLAYER_WIDTH, top:topB, bottom:topB}, false
+            );  
+          }
         }
+
 
         match.aPosition = {
           playerLeft: !match.aSeed ? playerLeft : 0,
@@ -141,6 +157,7 @@ export class TournamentComponent {
             right: left + TournamentComponent.WIDTH, 
             bottom:(topA + topB) / 2
           };
+
           this.drawLine(
             context, match.bPosition, this.isWin(match.bScore, match.aScore)
           );
@@ -181,6 +198,8 @@ export class TournamentComponent {
   }
 
   drawLine(context:CanvasRenderingContext2D, position:IPosition, isWin:boolean){
+console.log(JSON.stringify(position));
+
     context.beginPath();
     context.lineWidth = isWin ? 5: 2;
     context.moveTo(position.left, position.top);
@@ -272,6 +291,8 @@ export class TournamentComponent {
 
   ngOnDestroy(){
     this.itemSubscription.unsubscribe();
+
+    window.removeEventListener('resize');
   }
 }
 
